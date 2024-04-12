@@ -52,7 +52,7 @@ function game() {
     }
     const playAgain = prompt("Do you want to play again? (yes/no)");
     if (playAgain.toLowerCase() === 'yes') {
-        game(); // Start a new game
+        game();
     } else {
         console.log("Thanks for playing!");
     }
