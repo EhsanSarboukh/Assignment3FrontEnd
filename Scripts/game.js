@@ -1,61 +1,104 @@
-function computerPlay() {
-    const choices = ['Rock', 'Paper', 'Scissors'];
-    const randomIndex = Math.floor(Math.random() * choices.length);
-    return choices[randomIndex];
-}
-
-function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection.toLowerCase();
-
-
-    if (!['rock', 'paper', 'scissors'].includes(playerSelection)) {
-        return 'Invalid selection. Please choose Rock, Paper, or Scissors.';
+class Player {
+    constructor(name) {
+        this.name = name;
+        this.score = 0;
     }
 
-    if (playerSelection === computerSelection.toLowerCase()) {
-        return "It's a tie!";
-    } else if (
-        (playerSelection === 'rock' && computerSelection.toLowerCase() === 'scissors') ||
-        (playerSelection === 'paper' && computerSelection.toLowerCase() === 'rock') ||
-        (playerSelection === 'scissors' && computerSelection.toLowerCase() === 'paper')
-    ) {
-        return `You Win! ${playerSelection} beats ${computerSelection}.`;
-    } else {
-        return `You Lose! ${computerSelection} beats ${playerSelection}.`;
+    makeSelection() {
+        return prompt(`${this.name}, enter your choice (Rock, Paper, or Scissors):`).toLowerCase();
     }
 }
 
-function game() {
-    let playerScore = 0;
-    let computerScore = 0;
+class Game {
+    constructor(difficulty) {
+        this.player = new Player('Player');
+        this.computer = new Player('Computer');
+        this.difficulty = difficulty;
+    }
 
-    for (let i = 0; i < 5; i++) {
-        const playerSelection = prompt("Enter your choice (Rock, Paper, or Scissors):");
-        const computerSelection = computerPlay();
-        const result = playRound(playerSelection, computerSelection);
-        
-        console.log(result);
+    computerPlay() {
+        const choices = ['rock', 'paper', 'scissors'];
+        let computerSelection;
+        if (this.difficulty === 'easy') {
+            const probabilities = { 'rock': 0.6, 'paper': 0.3, 'scissors': 0.1 };
+            computerSelection = this.chooseByProbability(probabilities);
+        } else if (this.difficulty === 'medium') {
+            const probabilities = { 'rock': 0.4, 'paper': 0.4, 'scissors': 0.2 };
+            computerSelection = this.chooseByProbability(probabilities);
+        } else if (this.difficulty === 'hard') {
+            const winningMoves = { 'rock': 'paper', 'paper': 'scissors', 'scissors': 'rock' };
+            computerSelection = winningMoves[this.playerSelection];
+        }
+        return computerSelection;
+    }
 
-        if (result.includes('Win')) {
-            playerScore++;
-        } else if (result.includes('Lose')) {
-            computerScore++;
+    chooseByProbability(probabilities) {
+        const random = Math.random();
+        let cumulativeProbability = 0;
+        for (const [choice, probability] of Object.entries(probabilities)) {
+            cumulativeProbability += probability;
+            if (random <= cumulativeProbability) {
+                return choice;
+            }
         }
     }
 
-    if (playerScore > computerScore) {
-        console.log(`Congratulations! You win the game with a score of ${playerScore}-${computerScore}.`);
-    } else if (playerScore < computerScore) {
-        console.log(`Sorry, you lose the game with a score of ${playerScore}-${computerScore}.`);
-    } else {
-        console.log(`It's a tie game with a score of ${playerScore}-${computerScore}.`);
+
+    playRound(playerSelection, computerSelection) {
+        if (playerSelection === computerSelection) {
+            return "It's a tie!";
+        } else if (
+            (playerSelection === 'rock' && computerSelection === 'scissors') ||
+            (playerSelection === 'paper' && computerSelection === 'rock') ||
+            (playerSelection === 'scissors' && computerSelection === 'paper')
+        ) {
+            this.player.score++;
+            return `You Win! ${playerSelection} beats ${computerSelection}.`;
+        } else {
+            this.computer.score++;
+            return `You Lose! ${computerSelection} beats ${playerSelection}.`;
+        }
     }
-    const playAgain = prompt("Do you want to play again? (yes/no)");
-    if (playAgain.toLowerCase() === 'yes') {
-        game();
-    } else {
-        console.log("Thanks for playing!");
+
+
+    playGame() {
+        let rounds = 5; 
+        if (this.difficulty === 'hard') {
+            rounds = 7; 
+        }
+
+        for (let i = 0; i < rounds; i++) {
+            this.playerSelection = this.player.makeSelection();
+            const computerSelection = this.computerPlay();
+            const result = this.playRound(this.playerSelection, computerSelection);
+            console.log(result);
+        }
+
+
+        if (this.player.score > this.computer.score) {
+            console.log(`Congratulations! You win the game with a score of ${this.player.score}-${this.computer.score}.`);
+        } else if (this.player.score < this.computer.score) {
+            console.log(`Sorry, you lose the game with a score of ${this.player.score}-${this.computer.score}.`);
+        } else {
+            console.log(`It's a tie game with a score of ${this.player.score}-${this.computer.score}.`);
+        }
+
+
+        const playAgain = prompt("Do you want to play again? (yes/no)");
+        if (playAgain.toLowerCase() === 'yes') {
+            this.player.score = 0;
+            this.computer.score = 0;
+            this.playGame(); 
+        } else {
+            console.log("Thanks for playing!");
+        }
     }
 }
 
-game();
+const difficulty = prompt("Choose difficulty level (easy, medium, or hard):").toLowerCase();
+if (['easy', 'medium', 'hard'].includes(difficulty)) {
+    const game = new Game(difficulty);
+    game.playGame();
+} else {
+    console.log("Invalid difficulty level. Please choose from easy, medium, or hard.");
+}
