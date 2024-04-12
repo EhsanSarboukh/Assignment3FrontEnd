@@ -50,6 +50,12 @@ function game() {
     } else {
         console.log(`It's a tie game with a score of ${playerScore}-${computerScore}.`);
     }
+    const playAgain = prompt("Do you want to play again? (yes/no)");
+    if (playAgain.toLowerCase() === 'yes') {
+        game(); // Start a new game
+    } else {
+        console.log("Thanks for playing!");
+    }
 }
 
 game();
