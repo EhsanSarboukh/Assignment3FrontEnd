@@ -48,6 +48,10 @@ class Game {
             return 'Game canceled by the player.';
         }
 
+        if (!['rock', 'paper', 'scissors'].includes(playerSelection)) {
+            return 'Invalid choice! Please choose Rock, Paper, or Scissors.';
+        }
+
         if (playerSelection === computerSelection) {
             return "It's a tie!";
         } else if (
@@ -65,6 +69,10 @@ class Game {
 
     playGame() {
         let rounds = 5;
+        if (this.difficulty === 'hard') {
+            rounds = 7;
+        }
+
         for (let i = 0; i < rounds; i++) {
             this.playerSelection = this.player.makeSelection();
             if (this.playerSelection === null) {
