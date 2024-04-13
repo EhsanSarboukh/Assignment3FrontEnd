@@ -104,9 +104,12 @@ const difficulty = prompt("Choose difficulty level (easy, medium, or hard):");
 
 if (difficulty === null) {
     alert('Game canceled by the player.');
-} else if (['easy', 'medium', 'hard'].includes(difficulty.toLowerCase())) {
-    const game = new Game(difficulty.toLowerCase());
-    game.playGame();
 } else {
-    alert("Invalid difficulty level. Please choose from easy, medium, or hard.");
+    const validDifficulties = ['easy', 'medium', 'hard'];
+    if (validDifficulties.includes(difficulty.toLowerCase())) {
+        const game = new Game(difficulty.toLowerCase());
+        game.playGame();
+    } else {
+        alert("Invalid difficulty level. Please choose from easy, medium, or hard.");
+    }
 }
