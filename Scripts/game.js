@@ -65,10 +65,6 @@ class Game {
 
     playGame() {
         let rounds = 5;
-        if (this.difficulty === 'hard') {
-            rounds = 7;
-        }
-
         for (let i = 0; i < rounds; i++) {
             this.playerSelection = this.player.makeSelection();
             if (this.playerSelection === null) {
