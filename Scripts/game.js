@@ -5,7 +5,8 @@ class Player {
     }
 
     makeSelection() {
-        return prompt(`${this.name}, enter your choice (Rock, Paper, or Scissors):`).toLowerCase();
+        const selection = prompt(`${this.name}, enter your choice (Rock, Paper, or Scissors):`);
+        return selection !== null ? selection.toLowerCase() : null;
     }
 }
 
@@ -17,7 +18,6 @@ class Game {
     }
 
     computerPlay() {
-        const choices = ['rock', 'paper', 'scissors'];
         let computerSelection;
         if (this.difficulty === 'easy') {
             const probabilities = { 'rock': 0.6, 'paper': 0.3, 'scissors': 0.1 };
@@ -43,8 +43,11 @@ class Game {
         }
     }
 
-
     playRound(playerSelection, computerSelection) {
+        if (playerSelection === null) {
+            return 'Game canceled by the player.';
+        }
+
         if (playerSelection === computerSelection) {
             return "It's a tie!";
         } else if (
@@ -60,45 +63,54 @@ class Game {
         }
     }
 
-
     playGame() {
-        let rounds = 5; 
+        let rounds = 5;
         if (this.difficulty === 'hard') {
-            rounds = 7; 
+            rounds = 7;
         }
 
         for (let i = 0; i < rounds; i++) {
             this.playerSelection = this.player.makeSelection();
+            if (this.playerSelection === null) {
+                alert('Game canceled by the player.');
+                return;
+            }
             const computerSelection = this.computerPlay();
             const result = this.playRound(this.playerSelection, computerSelection);
-            console.log(result);
+            alert(`${result}\nPlayer Score: ${this.player.score}\nComputer Score: ${this.computer.score}`);
         }
 
-
+        let message;
         if (this.player.score > this.computer.score) {
-            console.log(`Congratulations! You win the game with a score of ${this.player.score}-${this.computer.score}.`);
+            message = `Congratulations! You win the game with a score of ${this.player.score}-${this.computer.score}.`;
         } else if (this.player.score < this.computer.score) {
-            console.log(`Sorry, you lose the game with a score of ${this.player.score}-${this.computer.score}.`);
+            message = `Sorry, you lose the game with a score of ${this.player.score}-${this.computer.score}.`;
         } else {
-            console.log(`It's a tie game with a score of ${this.player.score}-${this.computer.score}.`);
+            message = `It's a tie game with a score of ${this.player.score}-${this.computer.score}.`;
         }
 
+        alert(message);
 
         const playAgain = prompt("Do you want to play again? (yes/no)");
-        if (playAgain.toLowerCase() === 'yes') {
+        if (playAgain !== null && playAgain.toLowerCase() === 'yes') {
             this.player.score = 0;
             this.computer.score = 0;
-            this.playGame(); 
+            this.playGame();
         } else {
-            console.log("Thanks for playing!");
+            alert("Thanks for playing!");
         }
     }
 }
 
-const difficulty = prompt("Choose difficulty level (easy, medium, or hard):").toLowerCase();
-if (['easy', 'medium', 'hard'].includes(difficulty)) {
-    const game = new Game(difficulty);
+alert('Welcome to Rock Paper Scissors game!');
+
+const difficulty = prompt("Choose difficulty level (easy, medium, or hard):");
+
+if (difficulty === null) {
+    alert('Game canceled by the player.');
+} else if (['easy', 'medium', 'hard'].includes(difficulty.toLowerCase())) {
+    const game = new Game(difficulty.toLowerCase());
     game.playGame();
 } else {
-    console.log("Invalid difficulty level. Please choose from easy, medium, or hard.");
+    alert("Invalid difficulty level. Please choose from easy, medium, or hard.");
 }
